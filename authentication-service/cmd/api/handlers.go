@@ -33,9 +33,11 @@ func (app *Config) Authenticate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// log authentication
 	err = app.logRequest("authentication", fmt.Sprintf("%s logged in", user.Email))
 	if err != nil {
 		app.errorJSON(w, err)
+		return
 	}
 
 	payload := jsonResponse{
@@ -52,6 +54,9 @@ func (app *Config) logRequest(name, data string) error {
 		Name string `json:"name"`
 		Data string `json:"data"`
 	}
+
+	entry.Name = name
+	entry.Data = data
 
 	jsonData, _ := json.MarshalIndent(entry, "", "\t")
 	logServiceURL := "http://logger-service/log"
